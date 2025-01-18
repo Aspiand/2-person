@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         total_rata_rata = findViewById(R.id.total_rata_rata);
         tombol_simpan = dialog.findViewById(R.id.simpan);
 
+        // Menampilkan teks yang sudah ditentukan ketika list kosong.
+        list_view.setEmptyView(findViewById(R.id.empty_list));
+
         tombol_tambah.setOnClickListener(view -> {
             dialog.show();
         });
@@ -191,9 +194,17 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT nama, (android + basis_data + web) / 3 as rata_rata FROM data_siswa", null);
         // Untuk penjelasan query, baca fungsi `show_total()`.
 
+        // Operasi terhadap cursor harus didalam kondisi berikut agar tidak terjadi error seperti
+        // android.database.CursorIndexOutOfBoundsException: Index 0 requested, with a size of 0.
+        // sederhananya jika data ada, program didalam blok if akan dijalankan.
+        // jika tidak program didalam blok else yang akan dijalankan.
+
         if (cursor.moveToFirst()) {
 
+            // Membuat adapter berdasarkan data pada database.
+
             ArrayList<HashMap<String, String>> list_data = new ArrayList<>();
+
             do {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("nama", cursor.getString(0));
@@ -208,10 +219,11 @@ public class MainActivity extends AppCompatActivity {
             SimpleAdapter adapter = new SimpleAdapter(
                     this, list_data, R.layout.list_data, kunci, id
             );
- 
+
             list_view.setAdapter(adapter);
             cursor.close();
         } else {
+            // Menghapus adapter untuk ListView agar teks 'Tidak ada data' tampil.
             list_view.setAdapter(null);
         }
     }

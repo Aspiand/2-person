@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -13,6 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     Koneksi koneksi;
@@ -23,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button tombol_tambah, tombol_refresh, tombol_simpan;
     TextView total_jumlah_murid, total_rata_rata;
+    ListView list_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_form);
 
+        list_view = findViewById(R.id.list_data);
         tombol_tambah = findViewById(R.id.tambah_data);
         tombol_refresh = findViewById(R.id.refresh_data);
         total_jumlah_murid = findViewById(R.id.jumlah_murid);
         total_rata_rata = findViewById(R.id.total_rata_rata);
-
         tombol_simpan = dialog.findViewById(R.id.simpan);
 
         tombol_tambah.setOnClickListener(view -> {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     new String[]{nama, android, basis_data, web}
             );
 
+            refresh();
             dialog.dismiss();
         });
 
@@ -86,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
             db.execSQL("DELETE FROM data_siswa");
 
+            refresh();
             return true;
         });
 
@@ -95,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh() {
         // menampilkan data
+        show_list();
         show_total();
     }
 
@@ -175,6 +184,36 @@ public class MainActivity extends AppCompatActivity {
 
         // selalu di akhir!.
         cursor.close(); // abaikan, tapi pastikan dijalankan tiap ada cursor.
+    }
+
+    public void show_list() {
+        SQLiteDatabase db = koneksi.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT nama, (android + basis_data + web) / 3 as rata_rata FROM data_siswa", null);
+        // Untuk penjelasan query, baca fungsi `show_total()`.
+
+        if (cursor.moveToFirst()) {
+
+            ArrayList<HashMap<String, String>> list_data = new ArrayList<>();
+            do {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("nama", cursor.getString(0));
+                map.put("rata_rata", cursor.getString(1));
+
+                list_data.add(map);
+            } while (cursor.moveToNext());
+
+            String[] kunci = new String[]{"nama", "rata_rata"};
+            int[] id = new int[]{R.id.list_nama, R.id.list_nilai};
+
+            SimpleAdapter adapter = new SimpleAdapter(
+                    this, list_data, R.layout.list_data, kunci, id
+            );
+ 
+            list_view.setAdapter(adapter);
+            cursor.close();
+        } else {
+            list_view.setAdapter(null);
+        }
     }
 
     public void test() {

@@ -107,40 +107,4 @@ public class Koneksi extends SQLiteOpenHelper {
 }
 ```
 
-Setelah itu, buka file `MainActivity.java` dan sesuaikan dengan kode dibawah:
-> [!CAUTION]
-> Pastikan besar kecil huruf diperhatikan
-```java
-package id.my.aspian.l011;
-
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-public class MainActivity extends AppCompatActivity {
-    Koneksi koneksi;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        koneksi = new Koneksi(this);
-    }
-}
-```
-
-> [!IMPORTANT]
-> Setelah membuat dan menyesuaikan file `MainActivity.java dan Koneksi.java`, disarankan untuk langsung menjalankan aplikasi agar error dapat dideteksi dengan segera.
-
-Setelah aplikasi berjalan dan tidak mengalami crash, cek skema database yang telah dibuat dengan menggunakan `App Inspection` yang bersembunyi pada titik 3 (More tool windows) pada kiri atas.
+## 2. CRUD

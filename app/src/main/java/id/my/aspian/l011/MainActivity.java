@@ -1,10 +1,12 @@
 package id.my.aspian.l011;
 
 import android.app.Dialog;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +17,12 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
     Koneksi koneksi;
     Dialog dialog;
+    boolean aksi = false; // false untuk tambah dan true untuk mengedit
+    // variable aksi dibuat agar dapat menentukan apakah form dialog digunakan
+    // untuk menambah data atau memperbarui data.
 
     Button tombol_tambah, tombol_refresh, tombol_simpan;
+    TextView total_jumlah_murid, total_rata_rata;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         tombol_tambah = findViewById(R.id.tambah_data);
         tombol_refresh = findViewById(R.id.refresh_data);
+        total_jumlah_murid = findViewById(R.id.jumlah_murid);
+        total_rata_rata = findViewById(R.id.total_rata_rata);
+
         tombol_simpan = dialog.findViewById(R.id.simpan);
 
         tombol_tambah.setOnClickListener(view -> {
@@ -66,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
             dialog.dismiss();
         });
 
+        // memperbarui data yang ada ketika tombol refresh ditekan.
+        tombol_refresh.setOnClickListener(view -> {
+            refresh();
+        });
+
         // Menghapus semua data ketika tombol refresh ditekan lama.
         tombol_refresh.setOnLongClickListener(view -> {
             SQLiteDatabase db = koneksi.getWritableDatabase();
@@ -75,9 +89,92 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-
-
         test(); // abaikan
+        refresh();
+    }
+
+    public void refresh() {
+        // menampilkan data
+        show_total();
+    }
+
+    public void show_total() {
+        // Menampilkan data spesifik untuk total_siswa dan total nilai rata-rata untuk satu kelas.
+
+
+        // Mendapatkan akses baca ke database.
+        // biasanya digunakan ketika melakukan `SELECT`
+        SQLiteDatabase db = koneksi.getReadableDatabase();
+
+        // Dikarenakan sqlite tidak memiliki function `FORMAT`,
+        // sebagai gantinya fungsi yang akan digunakan adalah `ROUND`.
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) as total_siswa, ROUND(SUM((android + basis_data + web) / 3) / COUNT(*), 0) AS rata_rata FROM data_siswa", null);
+        cursor.moveToFirst(); // abaikan, tetapi pastikan dijalankan tiap melakukan `SELECT`.
+
+        // Contoh jika menggunakan MySQL.
+        // > SELECT COUNT(*) as total_siswa, FORMAT(SUM((android + basis_data + web) / 3) / COUNT(*), 0) AS rata_rata FROM dhlh;
+        // +-------------+-----------+
+        // | total_siswa | rata_rata |
+        // +-------------+-----------+
+        // | 4           | 63        |
+        // +-------------+-----------+
+        //
+        // Breakdown query
+        // Jika disederhanakan query tersebut hanya akan menjadi
+        // SELECT kolom_1, kolom_2 FROM data_siswa;
+        //
+        // kolom_1
+        // COUNT(*) as total_siswa
+        // digunakan untuk menghitung total data yang ada pada table.
+        //
+        // kolom 2
+        // FORMAT(SUM((android + basis_data + web) / 3) / COUNT(*), 0)
+        // disini terdapat dua kali menghitung rata-rata
+        //
+        // yang pertama menghitung rata-rata nilai tiap murid:
+        // (android + basis_data + web) / 3)
+        //
+        // kemudian menjumlahkan semuanya dengan dengan rata-rata murid
+        // lain dan membaginya dengan jumlah murid yang ada dengan fungsi `SUM`
+        // SUM((android + basis_data + web) / 3))
+        //
+        // lalu menggunakan `FORMAT` agar rata_rata tidak memiliki koma.
+        // Contoh:
+        //
+        // 1
+        // SELECT FORMAT(123.456, 0);
+        // Output:
+        // +--------------------+
+        // | FORMAT(123.456, 0) |
+        // +--------------------+
+        // | 123                |
+        // +--------------------+
+        //
+        // 2
+        // SELECT FORMAT(3.141592653589793, 2);
+        // Output:
+        // +------------------------------+
+        // | FORMAT(3.141592653589793, 2) |
+        // +------------------------------+
+        // | 3.14                         |
+        // +------------------------------+
+        //
+        // Jika tidak menggunakan AS / Alias, maka output akan seperti ini:
+        // +----------+-------------------------------------------------------------+
+        // | COUNT(*) | FORMAT(SUM((android + basis_data + web) / 3) / COUNT(*), 0) |
+        // +----------+-------------------------------------------------------------+
+        // | 4        | 63                                                          |
+        // +----------+-------------------------------------------------------------+
+
+        // `cursor` berisi data dari hasil query `SELECT` sebelumnya.
+        String jumlah_murid = cursor.getString(0); // 0 maksudnya total_siswa
+        String rata_rata = cursor.getString(1); // 1 maksudnya rata_rata
+
+        total_rata_rata.setText("Total rata-rata: " + rata_rata);
+        total_jumlah_murid.setText("Jumlah murid: " + jumlah_murid);
+
+        // selalu di akhir!.
+        cursor.close(); // abaikan, tapi pastikan dijalankan tiap ada cursor.
     }
 
     public void test() {

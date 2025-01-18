@@ -1,8 +1,11 @@
-# Tujuan
-Dapat membuat Create, Read, Update, Delete (CRUD) **_sederhana_** dengan menggunakan `SQLiteHelper` di Android.
-
 > [!NOTE]
 > Untuk alasan kemudahan, kode pada repository ini tidak menerapkan prinsip-prinsip seperti `Clean Code`, `DRY`, dll.
+
+> [!IMPORTANT]
+> Jika terjadi masalah seperti `findViewById(R.id.total_rata_rata);` berwarna merah padahal pada xml sudah sama, lakukan clean build dengan cara klik main menu pada pojok paling kiri atas. Lalu arahkan kekanan hingga build, kemudian pilih clean project. 
+
+# Tujuan
+Dapat membuat Create, Read, Update, Delete (CRUD) **_sederhana_** dengan menggunakan `SQLiteHelper` di Android.
 
 # Skema Aplikasi
 Pada halaman utama, terdapat judul, `ListView` yang berisi informasi siswa seperti nama dan nilai rata-rata yang dihitung berdasarkan input, jumlah siswa, nilai rata-rata kelas dan dua buah tombol.
@@ -46,6 +49,19 @@ Isi dari `dialog_form` simple saja. Disana terdapat 1 input untuk nama, 3 buah i
 # B. Java
 > [!CAUTION]
 > Jangan copy paste sembarang kode karena perbedaan nama file, variable dll memungkinkan terjadinya error yang akan mempersulit diri sendiri.
+
+## 0. Pembuka
+Nilai rata-rata dapat dihitung dengan menambahkan semuda data dan membaginya dengan banyaknya data.
+
+Contoh:
+
+Seorang murid memiliki nilai 80 pada mata pelajaran Android, 50 pada Basis Data, dan 70 pada Web.
+Maka cara menghitungnya adalah (80 + 50 + 70) / 3
+
+80, 50, 70 didapat dari nilai dan 3 merupakan jumlah mata pelajaran yang ada.
+
+> [!TIP]
+> Direkomendasikan menambahkan kurung pada penjumlahan untuk menghindari kesalahan.
 
 ## 1. Koneksi.java
 Buat file baru dengan cara klik kanan pada directory/folder MainActivity, lalu pilih new, cari Java Class.

@@ -34,13 +34,13 @@
                 android:id="@+id/jumlah_murid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jumlah Murid: " />
+                android:text="Jumlah murid: N/A" />
 
             <TextView
-                android:id="@+id/rata_rata"
+                android:id="@+id/total_rata_rata"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rata-Rata: " />
+                android:text="Total rata-rata: N/A" />
 
         </LinearLayout>
 

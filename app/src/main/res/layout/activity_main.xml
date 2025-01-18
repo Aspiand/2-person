@@ -9,8 +9,14 @@
     tools:context=".MainActivity">
 
     <ListView
+        android:id="@+id/list_data"
         android:layout_width="match_parent"
-        android:layout_height="200dp" />
+        android:layout_height="200dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="15sp"
+        android:padding="10dp"
+        android:scrollbars="none"
+        tools:listitem="@layout/list_data" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,7 +34,7 @@
                 android:id="@+id/jumlah_murid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jumlah Murid" />
+                android:text="Jumlah Murid: " />
 
             <TextView
                 android:id="@+id/rata_rata"

@@ -1,11 +1,18 @@
 # Tujuan
 Dapat membuat Create, Read, Update, Delete (CRUD) **_sederhana_** dengan menggunakan `SQLiteHelper` di Android.
 
+> [!NOTE]
+> Untuk alasan kemudahan, kode pada repository ini tidak menerapkan prinsip-prinsip seperti `Clean Code`, `DRY`, dll.
+
 # Skema Aplikasi
 Pada halaman utama, terdapat judul, `ListView` yang berisi informasi siswa seperti nama dan nilai rata-rata yang dihitung berdasarkan input, jumlah siswa, nilai rata-rata kelas dan dua buah tombol.
-Tombol pertama (tambah) ketika ditekan akan menampilkan `dialog_form` yang terdapat input nama, nilai, dan tombol simpan. Dialog tersebut akan melakukan validasi pada input dan jika data nilai tidak diisi maka akan dianggap **0**.
+
+Tombol pertama (tambah) ketika ditekan akan menampilkan `dialog_form` yang terdapat input nama, nilai, dan tombol simpan.
+
 Tombol kedua adalah refresh, digunakan untuk memperbarui daftar pada `ListView`. Alasan penggunaannya adalah karena sederhana dibandingkan menggunakan `SwipeRefreshLayout`.
+
 POV: Momen Ketika, Saat item pada `ListView` ditekan, akan muncul `dialog_form` dengan nilai berdasarkan item yang dipilih. Digunakan untuk memperbarui data.
+
 MK: When ketika pada item pada `ListView` ditekan lama atau _hold_, item akan dihapus. (untuk konfirmasi penghapusan kerjakan sendiri)
 
 Untuk database singkat saja, akan ada kolom nama, android, basis_data, dan web. Untuk nilai rata-rata akan dimasukkan pada query sql dengan nama kolom `nilai_rata_rata`. Alasannya agar kode java tidak terlalu berantakan.
@@ -15,15 +22,16 @@ Untuk database singkat saja, akan ada kolom nama, android, basis_data, dan web. 
 > Desain disini hanya sebagai referensi saja. Tolong kembangkan dan jangan malas.
 
 > [!NOTE]
-> Tiap element/tag etc. Harus diberi id agar dapat berinteraksi pada java nantinya.
-> Contoh: `EditText`, `Button` dll.
 > Pastikan id harus unik atau tidak boleh sama.
 
 ## 1. `activity_main`
 Pada aplikasi ini, hanya terdapat 1 activity saja agar mengurangi kompleksitas.
 
+```xml
+```
+
 ## 2. `dialog_form`
-Isi dari `dialog_form` simple saja. Disana terdapat tiga buah input untuk nilai dan sebuah button. Jadi `dialog_form` akan digunakan untuk dua hal, yaitu menambah dan memperbaharui data.
+Isi dari `dialog_form` simple saja. Disana terdapat 1 input untuk nama, 3 buah input untuk nilai dan sebuah button. Jadi `dialog_form` akan digunakan untuk dua hal, yaitu menambah dan memperbaharui data.
 
 `dialog_form` akan tampil jika tombol tambah pada `activity_main` atau item pada `ListView` ditekan.
 
@@ -55,17 +63,19 @@ import androidx.annotation.Nullable;
 
 public class Koneksi extends SQLiteOpenHelper {
     public Koneksi(@Nullable Context context) {
-        // `DATAAAA` merupakan nama database.
-        // abaikan konteks, factory, dan version
-        super(context, "DATAAAA", null, 1);
+        // abaikan konteks, factory,_ dan version
+        // cukup ganti nama_database.
+        super(context, "nama_database", null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Dengan alasan 'kemudahan', tidak ada primary key.
+
         // Membuat table
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS data_siswa (" +
-                        "nama varchar(255) PRIMARY KEY," +
+                        "nama varchar(255)," +
                         "android int," +
                         "basis_data int," +
                         "web int" +

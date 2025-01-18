@@ -8,17 +8,19 @@ import androidx.annotation.Nullable;
 
 public class Koneksi extends SQLiteOpenHelper {
     public Koneksi(@Nullable Context context) {
-        // `DATAAAA` merupakan nama database.
-        // abaikan konteks, factory, dan version
-        super(context, "DATAAAA", null, 1);
+        // abaikan konteks, factory,_ dan version
+        // cukup ganti nama_database.
+        super(context, "nama_database", null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Dengan alasan 'kemudahan', tidak ada primary key.
+
         // Membuat table
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS data_siswa (" +
-                        "nama varchar(255) PRIMARY KEY," +
+                        "nama varchar(255)," +
                         "android int," +
                         "basis_data int," +
                         "web int" +

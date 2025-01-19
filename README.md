@@ -111,4 +111,35 @@ public class Koneksi extends SQLiteOpenHelper {
 }
 ```
 
+### Informasi tambahan
+#### 1
+Disepanjang kode, akan terlihat banyak baris seperti
+```java
+SQLiteDatabase db = koneksi.getWritableDatabase();
+```
+atau
+```java
+SQLiteDatabase db = koneksi.getReadableDatabase();
+```
+
+Jadi, apa perbedannya?
+
+Singkatnya `getWritableDatabase` digunakan ketika akan melakukan operasi
+tulis seperti insert, update dan delete.
+
+Sedangkan untuk `getReadableDatabase` biasanya hanya digunakan untuk read data `(SELECT)`.
+
+`getWritableDatabase` menggunakan execSQL untuk menjalankan perintah sql.
+`getReadableDatabase` menggunakan rawQuery agar dapat berinteraksi dengan datanya.
+
+#### 2
+Tiap `cursor` perlu ditutup ketika tidak digunakan lagi.
+Biasanya diletakkan dipaling akhir.
+Contoh:
+```java
+Cursor cursor = db.rawQuery("SELECT * FROM data_siswa", null);
+cursor.moveToFirst();
+cursor.close();
+```
+
 ## 2. CRUD

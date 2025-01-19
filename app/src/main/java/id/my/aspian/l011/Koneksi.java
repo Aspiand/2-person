@@ -10,17 +10,15 @@ public class Koneksi extends SQLiteOpenHelper {
     public Koneksi(@Nullable Context context) {
         // abaikan konteks, factory,_ dan version
         // cukup ganti nama_database.
-        super(context, "nama_database", null, 2);
+        super(context, "nama_database", null, 3);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Dengan alasan 'kemudahan', tidak ada primary key.
-
         // Membuat table
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS data_siswa (" +
-                        "nama varchar(255)," +
+                        "nama varchar(255) PRIMARY KEY," +
                         "android int," +
                         "basis_data int," +
                         "web int" +

@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
@@ -39,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.black)); // abaikan
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
             }
 
+            // Mengatur agar tombol pada dialog menjadi update.
+            aksi = true;
+
             cursor.close();
         });
 
@@ -103,9 +106,18 @@ public class MainActivity extends AppCompatActivity {
 
         tombol_tambah.setOnClickListener(view -> {
             test(); // abaikan
+
+            // Mengatur agar tombol pada dialog menjadi tambah.
+            aksi = false;
             dialog.show();
         });
 
+        // Hal yang dilakukan oleh tombol simpan pada dialog berbeda tergantung
+        // dari bagaimana dialog ditampilkan.
+        // Jika dialog dimunculkan dengan menekan tombol tambah, maka variable `aksi` akan
+        // berisi nilai false dan tombol simpan akan menambahkan data.
+        // Jika dialog muncul ketika menekan item pada `ListView`, maka
+        // variable aksi akan berisi nilai true dan tombol tekan akan memperbarui data.
         tombol_simpan.setOnClickListener(view -> {
             // no validation
 
@@ -116,15 +128,63 @@ public class MainActivity extends AppCompatActivity {
             String web = dialog_web.getText().toString();
 
             SQLiteDatabase db = koneksi.getWritableDatabase();
-            // nama akan menggantikan '?' pertama,
-            // android akan menggantikan '?' kedua dan seterusnya.
-            db.execSQL(
-                    "INSERT INTO data_siswa VALUES (?, ?, ?, ?)",
-                    new String[]{nama, android, basis_data, web}
-            );
 
-            refresh();
-            dialog.dismiss();
+            // Jika aksi berisi nilai true, kode yang akan dijalankan adalah update.
+            // Jika false, maka data akan ditambahkan.
+
+            if (aksi) {
+                db.execSQL(
+                        "UPDATE data_siswa SET android = ?, basis_data = ?, web = ? WHERE nama = ?",
+                        new String[]{android, basis_data, web, nama}
+                );
+
+                Toast.makeText(this, "Data berhasil diubah!", Toast.LENGTH_SHORT).show();
+                refresh();
+                dialog.dismiss();
+            }
+
+            else {
+                // Secara sederhana, fungsi dari try dan catch disini agar tidak terjadi
+                // crash pada aplikasi ketika memasukkan nama yang sama.
+                // Dari pada melakukan validasi, cara ini sedikit lebih ringkas.
+                // Pesan `Duplikat` akan muncul ketika memasukkan nama baru,
+                // tetapi nama yang akan dimasukkan sudah ada di database.
+                try {
+                    db.execSQL(
+                            "INSERT INTO data_siswa VALUES (?, ?, ?, ?)",
+                            new String[]{nama, android, basis_data, web}
+                    );
+
+                    Toast.makeText(this, "Data berhasil ditambahkan!", Toast.LENGTH_SHORT).show();
+                    refresh();
+                    dialog.dismiss();
+                } catch (android.database.sqlite.SQLiteConstraintException e) {
+                    Toast.makeText(this, "Duplikat", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            // Penjelasan query.
+            // INSERT INTO data_siswa VALUES (?, ?, ?, ?)
+            // Singkatnya ini digunakan untuk menambahkan data dan '?' digunakan sebagai
+            // tempat menampung / placeholder sementara dan akan digantikan oleh array yang ada dibawahnya.
+            // Contoh:
+            //
+            // db.execSQL(
+            //     "UPDATE data_siswa SET android = ?, basis_data = ?, web = ? WHERE nama = ?",
+            //     new String[]{android, basis_data, web, nama}
+            // );
+            //
+            // android = '?', itu artinya '?' akan diganti nilainya dengan variable android.
+            // Hal yang sama juga berlaku untuk yang lain.
+            // Yang perlu diperhatikan disini adalah urutan peletakannya.
+            // Jika urutannya diganti, maka posisi variable didalam array juga harus diganti.
+            // Contoh:
+            //
+            // db.execSQL(
+            //     "UPDATE data_siswa SET basis_data = ?, web = ?, android = ? WHERE nama = ?",
+            //     new String[]{          basis_data,     web,     android,          nama}
+            // );
+            //
         });
 
         // memperbarui data yang ada ketika tombol refresh ditekan.
@@ -243,8 +303,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (cursor.moveToFirst()) {
 
-            // Membuat adapter berdasarkan data pada database.
+            // Untuk menampilkan data dengan ListView, diperlukan Adapter agar-agar
 
+            // Membuat adapter berdasarkan data pada database.
             ArrayList<HashMap<String, String>> list_data = new ArrayList<>();
 
             do {

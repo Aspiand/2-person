@@ -1,6 +1,9 @@
 > [!NOTE]
 > Untuk alasan kemudahan, kode pada repository ini tidak menerapkan prinsip-prinsip seperti `Clean Code`, `DRY`, dll.
 
+> [!NOTE]
+> Untuk fitur yang belum lengkap harap dikerjakan sendiri.
+
 > [!IMPORTANT]
 > Jika terjadi masalah seperti `findViewById(R.id.total_rata_rata);` berwarna merah padahal pada xml sudah sama, lakukan clean build dengan cara klik main menu pada pojok paling kiri atas. Lalu arahkan kekanan hingga build, kemudian pilih clean project. 
 

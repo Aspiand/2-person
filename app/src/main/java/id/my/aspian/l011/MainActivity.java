@@ -4,11 +4,14 @@ import android.app.Dialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button tombol_tambah, tombol_refresh, tombol_simpan;
     TextView total_jumlah_murid, total_rata_rata;
+    EditText dialog_nama, dialog_android, dialog_basis_data, dialog_web;
     ListView list_view;
 
     @Override
@@ -51,20 +55,58 @@ public class MainActivity extends AppCompatActivity {
         total_jumlah_murid = findViewById(R.id.jumlah_murid);
         total_rata_rata = findViewById(R.id.total_rata_rata);
         tombol_simpan = dialog.findViewById(R.id.simpan);
+        dialog_nama = dialog.findViewById(R.id.input_nama);
+        dialog_android = dialog.findViewById(R.id.input_android);
+        dialog_basis_data = dialog.findViewById(R.id.input_basis_data);
+        dialog_web = dialog.findViewById(R.id.input_web);
 
         // Menampilkan teks yang sudah ditentukan ketika list kosong.
         list_view.setEmptyView(findViewById(R.id.empty_list));
 
+        list_view.setOnItemClickListener((adapterView, view, i, l) -> {
+            SQLiteDatabase db = koneksi.getReadableDatabase();
+
+            // Mengambil nama berdasarkan item yang diklik
+            TextView nama = view.findViewById(R.id.list_nama);
+
+            // Mencari data berdasarkan nama.
+            Cursor cursor = db.rawQuery(
+                    "SELECT * FROM data_siswa WHERE nama = ?",
+                    new String[]{nama.getText().toString()}
+            );
+
+            if (cursor.moveToFirst()) {
+                dialog_nama.setText(cursor.getString(0));
+                dialog_android.setText(cursor.getString(1));
+                dialog_basis_data.setText(cursor.getString(2));
+                dialog_web.setText(cursor.getString(3));
+
+                dialog.show();
+            }
+
+            cursor.close();
+        });
+
+        list_view.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            SQLiteDatabase db = koneksi.getWritableDatabase();
+            TextView nama = view.findViewById(R.id.list_nama);
+            db.execSQL(
+                    "DELETE FROM data_siswa WHERE nama = ?",
+                    new String[]{nama.getText().toString()}
+            );
+
+            Toast.makeText(this, nama.getText().toString() + " berhasil dihapus", Toast.LENGTH_SHORT).show();
+            refresh();
+
+            return true;
+        });
+
         tombol_tambah.setOnClickListener(view -> {
+            test(); // abaikan
             dialog.show();
         });
 
         tombol_simpan.setOnClickListener(view -> {
-            EditText dialog_nama = dialog.findViewById(R.id.input_nama);
-            EditText dialog_android = dialog.findViewById(R.id.input_android);
-            EditText dialog_basis_data = dialog.findViewById(R.id.input_basis_data);
-            EditText dialog_web = dialog.findViewById(R.id.input_web);
-
             // no validation
 
             // Mengambil teks dan mengubahnya menjadi String.
@@ -96,16 +138,16 @@ public class MainActivity extends AppCompatActivity {
 
             db.execSQL("DELETE FROM data_siswa");
 
+            Toast.makeText(this, "Semuda data berhasil dihapus", Toast.LENGTH_SHORT).show();
             refresh();
+
             return true;
         });
 
-        test(); // abaikan
         refresh();
     }
 
     public void refresh() {
-        // menampilkan data
         show_list();
         show_total();
     }

@@ -1,5 +1,5 @@
 > [!NOTE]
-> Untuk alasan kemudahan, kode pada repository ini tidak menerapkan prinsip-prinsip seperti `Clean Code`, `DRY`, dll.
+> Untuk alasan kemudahan, kode pada repository ini tidak banyak menerapkan prinsip-prinsip seperti `Clean Code`, `DRY`, dll.
 
 > [!NOTE]
 > Untuk fitur yang belum lengkap harap dikerjakan sendiri.
@@ -54,7 +54,7 @@ Isi dari `dialog_form` simple saja. Disana terdapat 1 input untuk nama, 3 buah i
 > Jangan copy paste sembarang kode karena perbedaan nama file, variable dll memungkinkan terjadinya error yang akan mempersulit diri sendiri.
 
 ## 0. Pembuka
-Nilai rata-rata dapat dihitung dengan menambahkan semuda data dan membaginya dengan banyaknya data.
+Nilai rata-rata dapat dihitung dengan menambahkan semua data dan membaginya dengan banyaknya jumlah data.
 
 Contoh:
 
@@ -64,7 +64,8 @@ Maka cara menghitungnya adalah (80 + 50 + 70) / 3
 80, 50, 70 didapat dari nilai dan 3 merupakan jumlah mata pelajaran yang ada.
 
 > [!TIP]
-> Direkomendasikan menambahkan kurung pada penjumlahan untuk menghindari kesalahan.
+> Direkomendasikan menambahkan kurung pada penjumlahan untuk menghindari kesalahan perhitungan.
+> Tujuannya agar penjumlahan dilakukan terlebih dahulu, lalu kemudian dibagi.
 
 ## 1. Koneksi.java
 Buat file baru dengan cara klik kanan pada directory/folder MainActivity, lalu pilih new, cari Java Class.

@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     refresh();
                     dialog.dismiss();
                 } catch (android.database.sqlite.SQLiteConstraintException e) {
-                    Toast.makeText(this, "Duplikat", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Nama duplikat", Toast.LENGTH_SHORT).show();
                 }
             }
 

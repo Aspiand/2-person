@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
         dialog.setContentView(R.layout.dialog_form);
 
         list_view = findViewById(R.id.list_data);
-        tombol_tambah = findViewById(R.id.tambah_data);
-        tombol_refresh = findViewById(R.id.refresh_data);
+        tombol_tambah = findViewById(R.id.tombol_tambah);
+        tombol_refresh = findViewById(R.id.tombol_refresh);
         total_jumlah_murid = findViewById(R.id.jumlah_murid);
         total_rata_rata = findViewById(R.id.total_rata_rata);
         tombol_simpan = dialog.findViewById(R.id.simpan);
@@ -80,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
             // Mengambil nama berdasarkan item yang diklik
             TextView nama = view.findViewById(R.id.list_nama);
 
+            // Mengatur agar tombol pada dialog menjadi update.
+            aksi = true;
+
+            // Disable pengeditan nama karena nama digunakan sebagai primary key.
+            dialog_nama.setEnabled(false);
+
             // Mencari data berdasarkan nama.
             Cursor cursor = db.rawQuery(
                     "SELECT * FROM data_siswa WHERE nama = ?",
@@ -95,14 +101,12 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
             }
 
-            // Mengatur agar tombol pada dialog menjadi update.
-            aksi = true;
-
             cursor.close();
         });
 
         list_view.setOnItemLongClickListener((adapterView, view, i, l) -> {
             TextView nama = view.findViewById(R.id.list_nama);
+
             db.execSQL(
                     "DELETE FROM data_siswa WHERE nama = ?",
                     new String[]{nama.getText().toString()}
@@ -119,6 +123,11 @@ public class MainActivity extends AppCompatActivity {
 
             // Mengatur agar tombol pada dialog menjadi tambah.
             aksi = false;
+
+            // Mengubah nama agar dapat diedit.
+            dialog_nama.setEnabled(true);
+
+            // Menampilkan dialog
             dialog.show();
         });
 
@@ -149,9 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Data berhasil diubah!", Toast.LENGTH_SHORT).show();
                 refresh();
                 dialog.dismiss();
-            }
-
-            else {
+            } else {
                 // Secara sederhana, fungsi dari try dan catch disini agar tidak terjadi
                 // crash pada aplikasi ketika memasukkan nama yang sama.
                 // Dari pada melakukan validasi, cara ini sedikit lebih ringkas.
@@ -329,9 +336,7 @@ public class MainActivity extends AppCompatActivity {
 
             list_view.setAdapter(adapter);
             cursor.close();
-        }
-
-        else {
+        } else {
             // Menghapus adapter untuk ListView agar teks 'Tidak ada data' tampil.
             list_view.setAdapter(null);
         }

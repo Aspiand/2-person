@@ -90,34 +90,22 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/filter_data"
+        <Button
+            android:id="@+id/tombol_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/white"
-            android:contentDescription="Filter data"
-            android:src="@drawable/ic_filter"
-            tools:ignore="HardcodedText" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/refresh_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/white"
             android:contentDescription="Refresh data"
-            android:src="@drawable/ic_refresh"
+            android:text="Refersh"
             tools:ignore="HardcodedText" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/tambah_data"
+        <Button
+            android:id="@+id/tombol_tambah"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:backgroundTint="@color/white"
             android:contentDescription="Add new data"
-            android:src="@drawable/ic_add"
+            android:text="Tambah"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>

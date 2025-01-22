@@ -23,6 +23,8 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     Koneksi koneksi;
+    SQLiteDatabase db;
+
     Dialog dialog;
     boolean aksi = false; // false untuk tambah dan true untuk mengedit
     // variable aksi dibuat agar dapat menentukan apakah form dialog digunakan
@@ -32,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
     TextView total_jumlah_murid, total_rata_rata;
     EditText dialog_nama, dialog_android, dialog_basis_data, dialog_web;
     ListView list_view;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        koneksi.close();
+        db.close();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +54,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Database
         koneksi = new Koneksi(this);
+        db = koneksi.getWritableDatabase();
+
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_form);
 
@@ -64,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         list_view.setEmptyView(findViewById(R.id.empty_list));
 
         list_view.setOnItemClickListener((adapterView, view, i, l) -> {
-            SQLiteDatabase db = koneksi.getReadableDatabase();
 
             // Mengambil nama berdasarkan item yang diklik
             TextView nama = view.findViewById(R.id.list_nama);
@@ -91,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         list_view.setOnItemLongClickListener((adapterView, view, i, l) -> {
-            SQLiteDatabase db = koneksi.getWritableDatabase();
             TextView nama = view.findViewById(R.id.list_nama);
             db.execSQL(
                     "DELETE FROM data_siswa WHERE nama = ?",
@@ -126,8 +136,6 @@ public class MainActivity extends AppCompatActivity {
             String android = dialog_android.getText().toString();
             String basis_data = dialog_basis_data.getText().toString();
             String web = dialog_web.getText().toString();
-
-            SQLiteDatabase db = koneksi.getWritableDatabase();
 
             // Jika aksi berisi nilai true, kode yang akan dijalankan adalah update.
             // Jika false, maka data akan ditambahkan.
@@ -194,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Menghapus semua data ketika tombol refresh ditekan lama.
         tombol_refresh.setOnLongClickListener(view -> {
-            SQLiteDatabase db = koneksi.getWritableDatabase();
 
             db.execSQL("DELETE FROM data_siswa");
 
@@ -215,10 +222,8 @@ public class MainActivity extends AppCompatActivity {
     public void show_total() {
         // Menampilkan data spesifik untuk total_siswa dan total nilai rata-rata untuk satu kelas.
 
-
         // Mendapatkan akses baca ke database.
         // biasanya digunakan ketika melakukan `SELECT`
-        SQLiteDatabase db = koneksi.getReadableDatabase();
 
         // Dikarenakan sqlite tidak memiliki function `FORMAT`,
         // sebagai gantinya fungsi yang akan digunakan adalah `ROUND`.
@@ -292,7 +297,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show_list() {
-        SQLiteDatabase db = koneksi.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT nama, (android + basis_data + web) / 3 as rata_rata FROM data_siswa", null);
         // Untuk penjelasan query, baca fungsi `show_total()`.
 
@@ -325,7 +329,9 @@ public class MainActivity extends AppCompatActivity {
 
             list_view.setAdapter(adapter);
             cursor.close();
-        } else {
+        }
+
+        else {
             // Menghapus adapter untuk ListView agar teks 'Tidak ada data' tampil.
             list_view.setAdapter(null);
         }

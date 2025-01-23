@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         tombol_refresh = findViewById(R.id.tombol_refresh);
         total_jumlah_murid = findViewById(R.id.jumlah_murid);
         total_rata_rata = findViewById(R.id.total_rata_rata);
+
         tombol_simpan = dialog.findViewById(R.id.simpan);
         dialog_nama = dialog.findViewById(R.id.input_nama);
         dialog_android = dialog.findViewById(R.id.input_android);
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
         refresh();
     }
-
+ 
     public void refresh() {
         show_list();
         show_total();
